@@ -146,10 +146,15 @@ export class HeatmapChart extends BaseChart {
         if (showValues && progress > 0.5 && cellW > 30 && cellH > 20) {
           const a = Math.min(1, (progress - 0.5) * 2);
           ctx.globalAlpha = a;
-          ctx.fillStyle = intensity > 0.5 ? theme.bg : theme.textSecondary;
-          ctx.font = `500 ${Math.min(11, cellH * 0.4)}px ${theme.monoFamily}`;
+          // High contrast: dark text on bright cells, white text on dark cells
+          const textColor = intensity > 0.4 ? '#1a1815' : '#f0f0f0';
+          ctx.font = `700 ${Math.min(12, cellH * 0.42)}px ${theme.monoFamily}`;
           ctx.textAlign = 'center';
           ctx.textBaseline = 'middle';
+          // Shadow for readability over grain
+          ctx.fillStyle = intensity > 0.4 ? 'rgba(255,255,255,0.6)' : 'rgba(0,0,0,0.5)';
+          ctx.fillText(this.formatCellValue(val), x + w/2 + 0.5, y + h/2 + 0.5);
+          ctx.fillStyle = textColor;
           ctx.fillText(this.formatCellValue(val), x + w / 2, y + h / 2);
           ctx.globalAlpha = 1;
         }

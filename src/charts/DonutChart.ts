@@ -106,8 +106,8 @@ export class DonutChart extends BaseChart {
 
       const gc2 = this.donutConfig.gaugeColor?.[0] || theme.highlightGradient;
       const tg = ctx.createLinearGradient(cx - 30, cy, cx + 30, cy);
-      tg.addColorStop(0, gc[0]);
-      tg.addColorStop(1, gc[1]);
+      tg.addColorStop(0, gc2[0]);
+      tg.addColorStop(1, gc2[1]);
       ctx.fillStyle = tg;
       ctx.font = `700 ${Math.round(outerR * 0.45)}px ${theme.fontFamily}`;
       ctx.textAlign = 'center';
@@ -202,8 +202,8 @@ export class DonutChart extends BaseChart {
 
       const gc2 = this.donutConfig.gaugeColor?.[0] || theme.highlightGradient;
       const tg = ctx.createLinearGradient(cx - 30, cy, cx + 30, cy);
-      tg.addColorStop(0, gc[0]);
-      tg.addColorStop(1, gc[1]);
+      tg.addColorStop(0, gc2[0]);
+      tg.addColorStop(1, gc2[1]);
       ctx.fillStyle = tg;
       ctx.font = `700 ${Math.round(innerR * 0.55)}px ${theme.fontFamily}`;
       ctx.textAlign = 'center';
