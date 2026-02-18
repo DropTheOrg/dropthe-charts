@@ -18,6 +18,7 @@ export interface DonutChartConfig extends ChartConfig {
   centerValue?: string;
   gauge?: boolean;      // single-value gauge mode (0-100)
   gaugeValue?: number;  // value for gauge mode
+  gaugeColor?: string[][]; // override gauge gradient [[start, end]]
   ringWidth?: number;   // thickness of the ring (default: 0.35 of radius)
 }
 
@@ -85,7 +86,7 @@ export class DonutChart extends BaseChart {
 
       ctx.save();
       ctx.clip();
-      const gc = theme.highlightGradient;
+      const gc = this.donutConfig.gaugeColor?.[0] || theme.highlightGradient;
       const grad = ctx.createLinearGradient(cx - outerR, cy - outerR, cx + outerR, cy + outerR);
       grad.addColorStop(0, gc[0]);
       grad.addColorStop(1, gc[1]);
@@ -103,7 +104,7 @@ export class DonutChart extends BaseChart {
       const displayVal = Math.round(val * Math.min(1, cp));
       ctx.globalAlpha = Math.min(1, cp * 1.5);
 
-      const gc = theme.highlightGradient;
+      const gc2 = this.donutConfig.gaugeColor?.[0] || theme.highlightGradient;
       const tg = ctx.createLinearGradient(cx - 30, cy, cx + 30, cy);
       tg.addColorStop(0, gc[0]);
       tg.addColorStop(1, gc[1]);
@@ -199,7 +200,7 @@ export class DonutChart extends BaseChart {
       const a = Math.min(1, (progress - 0.5) * 2);
       ctx.globalAlpha = a;
 
-      const gc = theme.highlightGradient;
+      const gc2 = this.donutConfig.gaugeColor?.[0] || theme.highlightGradient;
       const tg = ctx.createLinearGradient(cx - 30, cy, cx + 30, cy);
       tg.addColorStop(0, gc[0]);
       tg.addColorStop(1, gc[1]);
