@@ -101,7 +101,7 @@ export class BubbleChart extends BaseChart {
         ctx.fill();
       }
 
-      if (d.label && active && r > 12 && progress > 0.5) {
+      if (d.label && r > 8 && progress > 0.5) {
         ctx.globalAlpha = Math.min(1, (progress - 0.5) * 2);
         ctx.fillStyle = theme.name === 'midnight' ? 'rgba(10,10,15,0.8)' : 'rgba(255,255,255,0.9)';
         ctx.font = `600 ${Math.min(12, r * 0.5)}px ${theme.fontFamily}`;

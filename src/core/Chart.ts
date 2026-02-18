@@ -122,9 +122,9 @@ export class BaseChart {
     const { ctx, config, theme, width, height } = this;
     const text = `Source: ${config.source || 'DropThe'} | dropthe.org`;
     ctx.fillStyle = theme.textSource;
-    ctx.font = `400 10px ${theme.monoFamily}`;
-    ctx.textAlign = 'left';
-    ctx.fillText(text, this.padding.left, height - 12);
+    ctx.font = `400 9px ${theme.monoFamily}`;
+    ctx.textAlign = 'right';
+    ctx.fillText(text, width - this.padding.right, height - 8);
   }
 
   createGradient(x: number, y1: number, y2: number, colors: string[]): CanvasGradient {

@@ -84,7 +84,13 @@ export class HistogramChart extends BaseChart {
       const w = barW - gap;
       if (h < 1) return;
 
-      const gc = theme.gradients[Math.floor((i / numBins) * theme.gradients.length) % theme.gradients.length];
+      // Color by distance from peak (green=common, orange=uncommon, red=extreme)
+      const peakBin = binCounts.indexOf(maxCount);
+      const dist = Math.abs(i - peakBin) / (numBins || 1);
+      const gc = dist < 0.25 ? theme.gradients[2] // green (money) = common
+        : dist < 0.5 ? theme.gradients[0] // purple (gaming) = moderate  
+        : dist < 0.75 ? theme.gradients[3] // gold (coin) = uncommon
+        : [theme.highlightGradient[0], '#ff6b6b']; // red = extreme
 
       ctx.beginPath();
       ctx.moveTo(x + r, y); ctx.lineTo(x + w - r, y);

@@ -92,7 +92,7 @@ export class ScatterChart extends BaseChart {
       }
       ctx.fill(); ctx.globalAlpha = 1;
 
-      if (showLabels && d.label && active && progress > 0.6) {
+      if (showLabels && d.label && progress > 0.6) {
         ctx.globalAlpha = Math.min(1, (progress - 0.6) * 2.5);
         ctx.fillStyle = theme.textSecondary; ctx.font = `400 10px ${theme.monoFamily}`;
         ctx.textAlign = 'center'; ctx.fillText(d.label, px, py - r - 6);
