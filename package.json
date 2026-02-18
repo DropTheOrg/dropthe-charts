@@ -1,7 +1,7 @@
 {
   "name": "dropthe-charts",
-  "version": "0.1.0",
-  "description": "DropThe data visualization library",
+  "version": "0.2.0",
+  "description": "DropThe data visualization library. 20 chart types. Canvas-rendered with lava gradients and film grain. Zero dependencies.",
   "main": "dist/dt-charts.min.js",
   "scripts": {
     "build": "esbuild src/index.ts --bundle --minify --outfile=dist/dt-charts.min.js --format=iife --global-name=DTCharts",
