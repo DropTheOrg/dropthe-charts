@@ -16,7 +16,8 @@ export interface BarChartConfig extends ChartConfig {
   showValues?: boolean;
   valuesOnBar?: boolean;
   barRadius?: number;
-  highlightTop?: number; // 1 = only #1, 3 = top 3, 10 = all, etc.
+  highlightTop?: number; // highlight top N bars
+  highlightLine?: number; // highlight specific bar at position N (1-indexed)
 }
 
 export class BarChart extends BaseChart {
@@ -33,14 +34,16 @@ export class BarChart extends BaseChart {
   }
 
   isActive(d: BarDataPoint, i: number): boolean {
-    const { data, highlightTop } = this.barConfig;
+    const { data, highlightTop, highlightLine } = this.barConfig;
+    if (highlightLine !== undefined) return i === (highlightLine - 1); // 1-indexed
     if (highlightTop !== undefined) return i < highlightTop;
     if (data.some(dd => dd.highlight)) return !!d.highlight;
-    return true; // no highlight = all active
+    return true;
   }
 
   hasContrast(): boolean {
-    const { data, highlightTop } = this.barConfig;
+    const { data, highlightTop, highlightLine } = this.barConfig;
+    if (highlightLine !== undefined) return true;
     if (highlightTop !== undefined) return highlightTop < data.length;
     return data.some(d => d.highlight);
   }

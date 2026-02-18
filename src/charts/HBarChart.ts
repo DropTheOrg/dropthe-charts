@@ -16,7 +16,8 @@ export interface HBarChartConfig extends ChartConfig {
   barHeight?: number;
   valuesOnBar?: boolean;
   showRank?: boolean;
-  highlightTop?: number; // 1, 3, 5, 10 etc.
+  highlightTop?: number; // highlight top N bars
+  highlightLine?: number; // highlight specific bar at position N (1-indexed)
 }
 
 export class HBarChart extends BaseChart {
@@ -36,15 +37,17 @@ export class HBarChart extends BaseChart {
   }
 
   isActive(d: HBarDataPoint, i: number): boolean {
-    const { data, highlightTop, showRank } = this.hbarConfig;
+    const { data, highlightTop, highlightLine, showRank } = this.hbarConfig;
+    if (highlightLine !== undefined) return i === (highlightLine - 1); // 1-indexed
     if (highlightTop !== undefined) return i < highlightTop;
-    if (showRank) return i < 3; // default: rank mode highlights top 3
+    if (showRank) return i < 3;
     if (data.some(dd => dd.highlight)) return !!d.highlight;
     return true;
   }
 
   hasContrast(): boolean {
-    const { data, highlightTop, showRank } = this.hbarConfig;
+    const { data, highlightTop, highlightLine, showRank } = this.hbarConfig;
+    if (highlightLine !== undefined) return true;
     if (highlightTop !== undefined) return highlightTop < data.length;
     if (showRank) return data.length > 3;
     return data.some(d => d.highlight);
