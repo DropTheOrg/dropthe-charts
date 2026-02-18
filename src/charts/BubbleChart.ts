@@ -69,44 +69,46 @@ export class BubbleChart extends BaseChart {
     this.drawSource();
     this.snapshotBackground();
 
-    const hasHL = data.some(d => d.highlight);
     // Sort by size desc so small bubbles render on top
     const sorted = data.map((d, i) => ({...d, idx: i})).sort((a, b) => b.z - a.z);
 
     sorted.forEach((d) => {
       const px = cL + ((d.x - xMin) / xR) * cW;
       const py = cB - ((d.y - yMin) / yR) * cH;
-      const r = Math.max(4, (d.z / zMax) * (maxRadius || 40)) * progress;
-      const active = !hasHL || d.highlight;
+      const r = Math.max(6, (d.z / zMax) * (maxRadius || 40)) * progress;
+      // Every bubble gets its own gradient color from the palette
       const gc = d.highlight ? theme.highlightGradient : theme.gradients[d.idx % theme.gradients.length];
 
       ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
+      ctx.save(); ctx.clip();
+      const grad = ctx.createRadialGradient(px - r*0.3, py - r*0.3, 0, px, py, r);
+      grad.addColorStop(0, gc[0]); grad.addColorStop(1, gc[1]);
+      ctx.fillStyle = grad; ctx.globalAlpha = d.highlight ? 0.9 : 0.75;
+      ctx.fillRect(px - r, py - r, r * 2, r * 2);
+      // Lava blob
+      const rg = ctx.createRadialGradient(px + r*0.2, py + r*0.2, 0, px, py, r*0.8);
+      rg.addColorStop(0, gc[1]); rg.addColorStop(0.5, gc[1] + '66'); rg.addColorStop(1, gc[1] + '00');
+      ctx.globalCompositeOperation = 'source-atop'; ctx.fillStyle = rg;
+      ctx.fillRect(px - r, py - r, r * 2, r * 2);
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.restore(); ctx.globalAlpha = 1;
 
-      if (active) {
-        ctx.save(); ctx.clip();
-        const grad = ctx.createRadialGradient(px - r*0.3, py - r*0.3, 0, px, py, r);
-        grad.addColorStop(0, gc[0]); grad.addColorStop(1, gc[1]);
-        ctx.fillStyle = grad; ctx.globalAlpha = 0.75;
-        ctx.fillRect(px - r, py - r, r * 2, r * 2);
-        // Lava blob
-        const rg = ctx.createRadialGradient(px + r*0.2, py + r*0.2, 0, px, py, r*0.8);
-        rg.addColorStop(0, gc[1]); rg.addColorStop(0.5, gc[1] + '66'); rg.addColorStop(1, gc[1] + '00');
-        ctx.globalCompositeOperation = 'source-atop'; ctx.fillStyle = rg;
-        ctx.fillRect(px - r, py - r, r * 2, r * 2);
-        ctx.globalCompositeOperation = 'source-over';
-        ctx.restore(); ctx.globalAlpha = 1;
-      } else {
-        const isDark = theme.name === 'midnight';
-        ctx.fillStyle = isDark ? 'rgba(255,255,240,0.06)' : 'rgba(0,0,0,0.04)';
-        ctx.fill();
-      }
-
-      if (d.label && r > 8 && progress > 0.5) {
+      // Labels inside or above every bubble
+      if (d.label && progress > 0.5) {
         ctx.globalAlpha = Math.min(1, (progress - 0.5) * 2);
-        ctx.fillStyle = theme.name === 'midnight' ? 'rgba(10,10,15,0.8)' : 'rgba(255,255,255,0.9)';
-        ctx.font = `600 ${Math.min(12, r * 0.5)}px ${theme.fontFamily}`;
-        ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-        ctx.fillText(d.label, px, py);
+        if (r > 16) {
+          // Label inside bubble
+          ctx.fillStyle = theme.name === 'midnight' ? 'rgba(10,10,15,0.85)' : 'rgba(255,255,255,0.95)';
+          ctx.font = `600 ${Math.min(12, r * 0.45)}px ${theme.fontFamily}`;
+          ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+          ctx.fillText(d.label, px, py);
+        } else {
+          // Label above bubble
+          ctx.fillStyle = theme.textPrimary;
+          ctx.font = `500 9px ${theme.fontFamily}`;
+          ctx.textAlign = 'center';
+          ctx.fillText(d.label, px, py - r - 5);
+        }
         ctx.globalAlpha = 1;
       }
     });

@@ -73,29 +73,28 @@ export class ScatterChart extends BaseChart {
     this.drawSource();
     this.snapshotBackground();
 
-    const hasHL = data.some(d => d.highlight);
+    // Draw ALL dots with full color -- each gets its own gradient from the palette
     data.forEach((d, i) => {
       const px = cL + ((d.x - xMin) / xR) * cW;
       const py = cB - ((d.y - yMin) / yR) * cH;
-      const r = (d.size || 6) * progress;
-      const active = !hasHL || d.highlight;
+      const r = (d.size || 8) * progress;
       const gc = d.highlight ? theme.highlightGradient : theme.gradients[i % theme.gradients.length];
 
       ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI * 2);
-      if (active) {
-        const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
-        grad.addColorStop(0, gc[0]); grad.addColorStop(1, gc[1]);
-        ctx.fillStyle = grad; ctx.globalAlpha = 0.85;
-      } else {
-        const isDark = theme.name === 'midnight';
-        ctx.fillStyle = isDark ? 'rgba(255,255,240,0.1)' : 'rgba(0,0,0,0.06)';
-      }
-      ctx.fill(); ctx.globalAlpha = 1;
+      const grad = ctx.createRadialGradient(px, py, 0, px, py, r);
+      grad.addColorStop(0, gc[0]); grad.addColorStop(1, gc[1]);
+      ctx.fillStyle = grad;
+      ctx.globalAlpha = d.highlight ? 1 : 0.85;
+      ctx.fill();
+      ctx.globalAlpha = 1;
 
+      // Labels on ALL dots
       if (showLabels && d.label && progress > 0.6) {
         ctx.globalAlpha = Math.min(1, (progress - 0.6) * 2.5);
-        ctx.fillStyle = theme.textSecondary; ctx.font = `400 10px ${theme.monoFamily}`;
-        ctx.textAlign = 'center'; ctx.fillText(d.label, px, py - r - 6);
+        ctx.fillStyle = theme.textPrimary;
+        ctx.font = `500 10px ${theme.fontFamily}`;
+        ctx.textAlign = 'center';
+        ctx.fillText(d.label, px, py - r - 6);
         ctx.globalAlpha = 1;
       }
     });

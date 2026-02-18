@@ -67,16 +67,16 @@ export class SankeyChart extends BaseChart {
 
     this.drawSource(); this.snapshotBackground();
 
-    const hasHL = links.some(l => l.highlight);
-
-    // Draw links
+    // Draw links -- color inherits from source node
     links.forEach((link, li) => {
       const src = nodeRects[link.source];
       const tgt = nodeRects[link.target];
       if (!src || !tgt) return;
 
-      const active = !hasHL || link.highlight;
-      const gc = link.highlight ? theme.highlightGradient : theme.gradients[li % theme.gradients.length];
+      // Link color = blend of source and target node colors
+      const srcGc = theme.gradients[link.source % theme.gradients.length];
+      const tgtGc = theme.gradients[link.target % theme.gradients.length];
+      const gc = [srcGc[0], tgtGc[1]];
 
       // Calculate link thickness proportional to value
       const thickness = Math.max(2, (link.value / totalValue) * cH * 0.8);
@@ -97,13 +97,9 @@ export class SankeyChart extends BaseChart {
       ctx.bezierCurveTo(cp2x, ty + thickness / 2 * progress, cp1x, sy + thickness / 2 * progress, sx, sy + thickness / 2 * progress);
       ctx.closePath();
 
-      if (active) {
-        const grad = ctx.createLinearGradient(sx, 0, tx, 0);
-        grad.addColorStop(0, gc[0] + '55'); grad.addColorStop(1, gc[1] + '55');
-        ctx.fillStyle = grad;
-      } else {
-        ctx.fillStyle = theme.name === 'midnight' ? 'rgba(255,255,240,0.04)' : 'rgba(0,0,0,0.02)';
-      }
+      const grad = ctx.createLinearGradient(sx, 0, tx, 0);
+      grad.addColorStop(0, gc[0] + '66'); grad.addColorStop(1, gc[1] + '66');
+      ctx.fillStyle = grad;
       ctx.fill();
     });
 
@@ -132,7 +128,7 @@ export class SankeyChart extends BaseChart {
       // Label
       if (progress > 0.5) {
         ctx.globalAlpha = Math.min(1, (progress - 0.5) * 2);
-        ctx.fillStyle = theme.textSecondary;
+        ctx.fillStyle = theme.textPrimary;
         ctx.font = `500 11px ${theme.fontFamily}`;
         ctx.textBaseline = 'middle';
         if (cols[ni] === 0) {
