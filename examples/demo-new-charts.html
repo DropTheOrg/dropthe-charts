@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>DropThe Charts -- New Chart Types Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { background:#0a0a0f; color:#f0f0f0; font-family:'Space Grotesk',system-ui,sans-serif; }
+    body.sand { background:#ebe5d9; color:#1a1815; }
+    .container { max-width:1100px; margin:0 auto; padding:40px 20px; }
+    h1 { font-size:28px; font-weight:700; margin-bottom:8px; }
+    .subtitle { color:#555; font-size:14px; margin-bottom:32px; }
+    h2 { font-size:22px; font-weight:600; margin:48px 0 8px; color:#f0f0f0; }
+    body.sand h2 { color:#1a1815; }
+    .desc { color:#777; font-size:13px; margin-bottom:16px; line-height:1.6; }
+    .chart-wrap { margin:16px 0 40px; border-radius:12px; overflow:hidden; }
+    .chart-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:16px 0 40px; }
+    .theme-toggle { display:flex; gap:8px; margin:0 0 32px; }
+    .theme-toggle button { padding:8px 20px; border:1px solid #333; border-radius:6px; background:#141419; color:#aaa; font-family:'Space Grotesk',system-ui,sans-serif; font-size:13px; cursor:pointer; transition:all .2s; }
+    .theme-toggle button.active { background:#c4b5fd; color:#0a0a0f; border-color:#c4b5fd; }
+    body.sand .theme-toggle button { background:#e0dace; border-color:#d4cec2; color:#8a8478; }
+    body.sand .theme-toggle button.active { background:#c4b5fd; color:#0a0a0f; border-color:#c4b5fd; }
+    .usage { background:#141419; border:1px solid #1a1a22; border-radius:8px; padding:16px; margin:8px 0 40px; }
+    body.sand .usage { background:#e0dace; border-color:#d4cec2; }
+    .usage code { font-family:'SF Mono','Fira Code',monospace; font-size:12px; color:#c4b5fd; }
+    .usage p { font-size:12px; color:#555; margin:4px 0; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>New Chart Types</h1>
+    <p class="subtitle">Radar, Donut, Heatmap, and Bump charts -- built for DropThe articles</p>
+
+    <div class="theme-toggle">
+      <button class="active" onclick="switchTheme('midnight')">Midnight</button>
+      <button onclick="switchTheme('sand')">Sand</button>
+    </div>
+
+    <!-- RADAR -->
+    <h2>Radar Chart</h2>
+    <p class="desc">Compare entities across multiple dimensions. Use when: "How does X compare to Y across 5+ metrics?" Perfect for entity profile pages and versus articles.</p>
+    <div class="chart-row">
+      <div id="radar1" class="chart-wrap"></div>
+      <div id="radar2" class="chart-wrap"></div>
+    </div>
+    <div class="usage">
+      <code>type: 'radar'</code>
+      <p>Data: <code>{ axes: ['Speed','Power','Defense'], datasets: [{label:'Entity', values:[80,90,70]}] }</code></p>
+      <p>Use in articles about: entity comparisons, product reviews, country profiles, game studio analysis</p>
+    </div>
+
+    <!-- DONUT -->
+    <h2>Donut Chart</h2>
+    <p class="desc">Market share, proportions, and score gauges. Use when: "X holds Y% of the market" or a single score out of 100. Gauge mode for ratings and scores.</p>
+    <div class="chart-row">
+      <div id="donut1" class="chart-wrap"></div>
+      <div id="donut2" class="chart-wrap"></div>
+    </div>
+    <div class="chart-row">
+      <div id="gauge1" class="chart-wrap"></div>
+      <div id="gauge2" class="chart-wrap"></div>
+    </div>
+    <div class="usage">
+      <code>type: 'donut'</code>
+      <p>Donut: <code>[{label:'Netflix', value:35, highlight:true}, {label:'Disney+', value:25}]</code></p>
+      <p>Gauge: <code>gauge: true, gaugeValue: 78, centerLabel: 'Feelgood Score'</code></p>
+      <p>Use in articles about: market share, platform dominance, entity scores, review ratings</p>
+    </div>
+
+    <!-- HEATMAP -->
+    <h2>Heatmap Chart</h2>
+    <p class="desc">Grid density visualization. Use when: "Where is X available?" or "How does coverage vary across categories?" Shows patterns in matrices.</p>
+    <div id="heatmap1" class="chart-wrap"></div>
+    <div id="heatmap2" class="chart-wrap"></div>
+    <div class="usage">
+      <code>type: 'heatmap'</code>
+      <p>Data: <code>{ rows: ['Netflix','Disney+'], cols: ['US','UK','DE'], values: [[95,88,72],[80,65,45]] }</code></p>
+      <p>Use in articles about: streaming availability, entity coverage, geographic comparisons, feature matrices</p>
+    </div>
+
+    <!-- BUMP -->
+    <h2>Bump Chart</h2>
+    <p class="desc">Rankings over time. Use when: "X rose from #5 to #1" or "The top 6 platforms reshuffled." The story is in the crossings -- where lines swap positions.</p>
+    <div id="bump1" class="chart-wrap"></div>
+    <div id="bump2" class="chart-wrap"></div>
+    <div class="usage">
+      <code>type: 'bump'</code>
+      <p>Data: <code>[{label:'Netflix', ranks:[1,1,2,3]}, {label:'Disney+', ranks:[4,3,1,1]}]</code></p>
+      <p>Use in articles about: platform rankings, market position shifts, historical comparisons, sports/esports standings</p>
+    </div>
+  </div>
+
+  <script src="../dist/dt-charts.min.js"></script>
+  <script>
+    var currentTheme = 'midnight';
+    var charts = [];
+
+    // === DATA ===
+    var studioRadar = {
+      axes: ['Metacritic', 'Titles Published', 'Revenue ($B)', 'Employees', 'Awards', 'Fan Rating'],
+      datasets: [
+        { label: 'FromSoftware', values: [92, 35, 2.1, 45, 88, 95], highlight: true },
+        { label: 'Nintendo', values: [87, 85, 12.5, 78, 92, 90] },
+        { label: 'Ubisoft', values: [72, 95, 7.8, 92, 60, 55] }
+      ]
+    };
+
+    var countryRadar = {
+      axes: ['GDP/Cap', 'Life Expect.', 'Education', 'Healthcare', 'Freedom', 'Happiness'],
+      datasets: [
+        { label: 'Norway', values: [95, 92, 96, 90, 98, 88], highlight: true },
+        { label: 'USA', values: [88, 78, 85, 70, 85, 72] },
+        { label: 'Japan', values: [72, 95, 88, 92, 80, 65] }
+      ]
+    };
+
+    var streamingShare = [
+      { label: 'Netflix', value: 31, highlight: true },
+      { label: 'Amazon', value: 22 },
+      { label: 'Disney+', value: 15 },
+      { label: 'HBO Max', value: 12 },
+      { label: 'Apple TV+', value: 8 },
+      { label: 'Other', value: 12 }
+    ];
+
+    var browserShare = [
+      { label: 'Chrome', value: 65, highlight: true },
+      { label: 'Safari', value: 18 },
+      { label: 'Firefox', value: 7 },
+      { label: 'Edge', value: 5 },
+      { label: 'Other', value: 5 }
+    ];
+
+    var streamHeatmap = {
+      rows: ['Netflix', 'Amazon', 'Disney+', 'HBO Max', 'Apple TV+', 'Paramount+'],
+      cols: ['US', 'UK', 'DE', 'JP', 'BR', 'IN', 'AU', 'KR'],
+      values: [
+        [98, 95, 90, 85, 92, 88, 93, 80],
+        [95, 90, 85, 78, 88, 92, 88, 72],
+        [90, 88, 82, 75, 80, 70, 85, 68],
+        [85, 78, 72, 45, 65, 30, 75, 40],
+        [80, 75, 70, 60, 55, 50, 72, 55],
+        [75, 50, 40, 20, 45, 25, 55, 15]
+      ]
+    };
+
+    var entityHeatmap = {
+      rows: ['Companies', 'People', 'Games', 'Movies', 'Universities', 'Tokens'],
+      cols: ['Profiles', 'Financials', 'Social', 'News', 'KG Links'],
+      values: [
+        [98, 85, 72, 90, 95],
+        [95, 40, 88, 85, 92],
+        [92, 30, 65, 70, 88],
+        [90, 55, 50, 80, 85],
+        [88, 20, 35, 60, 78],
+        [85, 92, 80, 75, 70]
+      ]
+    };
+
+    var platformBump = [
+      { label: 'Netflix', ranks: [1, 1, 1, 1, 2, 3], highlight: true },
+      { label: 'Amazon', ranks: [3, 3, 2, 2, 1, 1] },
+      { label: 'Disney+', ranks: [6, 5, 4, 3, 3, 2] },
+      { label: 'HBO Max', ranks: [4, 4, 3, 4, 4, 4] },
+      { label: 'Apple TV+', ranks: [5, 6, 6, 5, 5, 5] },
+      { label: 'Paramount+', ranks: [2, 2, 5, 6, 6, 6] }
+    ];
+
+    var studioBump = [
+      { label: 'FromSoft', ranks: [5, 4, 3, 2, 1, 1], highlight: true },
+      { label: 'Nintendo', ranks: [1, 1, 1, 1, 2, 2] },
+      { label: 'Rockstar', ranks: [2, 2, 2, 3, 3, 4] },
+      { label: 'Naughty Dog', ranks: [3, 3, 4, 4, 4, 3] },
+      { label: 'Capcom', ranks: [4, 5, 5, 5, 5, 5] }
+    ];
+
+    function renderAll(theme) {
+      charts.forEach(function(c) { if (c && c.destroy) c.destroy(); });
+      charts = [];
+      document.querySelectorAll('.chart-wrap').forEach(function(el) { el.innerHTML = ''; });
+
+      // Radar
+      charts.push(DTCharts.create('#radar1', {
+        type: 'radar', theme: theme, height: 380,
+        title: 'Game Studio Comparison',
+        subtitle: 'FromSoftware vs Nintendo vs Ubisoft',
+        source: 'DropThe Entity Database',
+        data: studioRadar
+      }));
+
+      charts.push(DTCharts.create('#radar2', {
+        type: 'radar', theme: theme, height: 380,
+        title: 'Country Quality of Life Index',
+        subtitle: 'Norway vs USA vs Japan',
+        source: 'DropThe + World Bank',
+        data: countryRadar
+      }));
+
+      // Donut
+      charts.push(DTCharts.create('#donut1', {
+        type: 'donut', theme: theme, height: 360,
+        title: 'Streaming Market Share 2026',
+        subtitle: 'Netflix still leads but shrinking',
+        source: 'DropThe Streaming Database',
+        data: streamingShare,
+        centerValue: '31%', centerLabel: 'Netflix'
+      }));
+
+      charts.push(DTCharts.create('#donut2', {
+        type: 'donut', theme: theme, height: 360,
+        title: 'Browser Market Share',
+        subtitle: 'Desktop worldwide',
+        source: 'StatCounter via DropThe',
+        data: browserShare,
+        centerValue: '65%', centerLabel: 'Chrome'
+      }));
+
+      // Gauges
+      charts.push(DTCharts.create('#gauge1', {
+        type: 'donut', theme: theme, height: 280,
+        title: 'Feelgood Score',
+        subtitle: 'Netflix overall rating',
+        source: 'DropThe',
+        data: [], gauge: true, gaugeValue: 78,
+        centerLabel: 'Feelgood Score'
+      }));
+
+      charts.push(DTCharts.create('#gauge2', {
+        type: 'donut', theme: theme, height: 280,
+        title: 'Entity Completeness',
+        subtitle: 'Apple Inc. data coverage',
+        source: 'DropThe',
+        data: [], gauge: true, gaugeValue: 94,
+        centerLabel: 'Data Score'
+      }));
+
+      // Heatmap
+      charts.push(DTCharts.create('#heatmap1', {
+        type: 'heatmap', theme: theme, height: 340,
+        title: 'Streaming Availability by Country',
+        subtitle: 'Content library size (% of US catalog)',
+        source: 'DropThe Streaming Database',
+        data: streamHeatmap, showValues: true
+      }));
+
+      charts.push(DTCharts.create('#heatmap2', {
+        type: 'heatmap', theme: theme, height: 340,
+        title: 'Entity Data Coverage',
+        subtitle: 'Completeness across entity types and data categories',
+        source: 'DropThe Knowledge Graph',
+        data: entityHeatmap, showValues: true
+      }));
+
+      // Bump
+      charts.push(DTCharts.create('#bump1', {
+        type: 'bump', theme: theme, height: 380,
+        title: 'Streaming Platform Rankings',
+        subtitle: 'Market position 2020-2025',
+        source: 'DropThe Streaming Database',
+        data: platformBump,
+        periods: ['2020', '2021', '2022', '2023', '2024', '2025']
+      }));
+
+      charts.push(DTCharts.create('#bump2', {
+        type: 'bump', theme: theme, height: 340,
+        title: 'Game Studio Rankings by Metacritic',
+        subtitle: 'FromSoftware\'s rise to #1',
+        source: 'DropThe Entity Database',
+        data: studioBump,
+        periods: ['2019', '2020', '2021', '2022', '2023', '2024']
+      }));
+    }
+
+    function switchTheme(theme) {
+      currentTheme = theme;
+      document.body.className = theme === 'sand' ? 'sand' : '';
+      document.querySelectorAll('.theme-toggle button').forEach(function(b) {
+        b.classList.toggle('active', b.textContent.toLowerCase() === theme);
+      });
+      renderAll(theme);
+    }
+
+    renderAll('midnight');
+  </script>
+</body>
+</html>
