@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DropThe Charts — v4</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #050508; color: #f0f0f0; font-family: 'Space Grotesk', system-ui, sans-serif; padding: 40px; }
+    h1 { font-size: 24px; margin-bottom: 4px; }
+    p.sub { color: #555566; font-size: 13px; margin-bottom: 48px; }
+    .section { margin-bottom: 64px; }
+    .label { font-size: 16px; font-weight: 700; margin-bottom: 4px; padding-left: 16px; }
+    .desc { font-size: 11px; color: #555566; margin-bottom: 20px; padding-left: 16px; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+    .box { background: #0a0a0f; border-radius: 16px; overflow: hidden; }
+    .box.full { grid-column: 1 / -1; }
+    .stats { display: flex; gap: 20px; margin-bottom: 20px; }
+    .box.stat { max-width: 280px; }
+    .sand-wrap { background: #ebe5d9; margin: 0 -40px; padding: 40px; }
+    .sand-wrap .label { color: #1a1815; }
+    .sand-wrap .desc { color: #8a8478; }
+    .sand-wrap .box { background: #ebe5d9; }
+    @media (max-width: 768px) { .row { grid-template-columns: 1fr; } .stats { flex-direction: column; } body, .sand-wrap { padding: 16px; } .sand-wrap { margin: 0 -16px; } }
+  </style>
+</head>
+<body>
+  <h1>DropThe Charts v4</h1>
+  <p class="sub">Lava gradients. Riso grain. Big numbers. Rank badges. Count-up animation. Highlight contrast.</p>
+
+  <!-- HIGHLIGHT + BIG NUMBERS -->
+  <div class="section">
+    <div class="label" style="border-left:3px solid #f9a8d4;padding-left:13px">Highlight + Big Numbers</div>
+    <div class="desc" style="padding-left:16px">Gradient text on values. Highlighted bar pops. Count-up on load.</div>
+    <div class="row">
+      <div class="box" id="hl-bar1"></div>
+      <div class="box" id="hl-bar2"></div>
+    </div>
+  </div>
+
+  <!-- RANK BADGES -->
+  <div class="section">
+    <div class="label" style="border-left:3px solid #c4b5fd;padding-left:13px">Rank Badges + Highlight</div>
+    <div class="desc" style="padding-left:16px">Top 3 get gradient pills. Highlight bar lava, rest glass. Gradient value text.</div>
+    <div class="row">
+      <div class="box full" id="rk-hbar1"></div>
+    </div>
+    <div class="row">
+      <div class="box full" id="rk-hbar2"></div>
+    </div>
+  </div>
+
+  <!-- VALUES ON BAR -->
+  <div class="section">
+    <div class="label" style="border-left:3px solid #86efac;padding-left:13px">Values Inside Bars</div>
+    <div class="desc" style="padding-left:16px">Big bold numbers inside the bar. Count-up animation.</div>
+    <div class="row">
+      <div class="box" id="vb-bar1"></div>
+      <div class="box" id="vb-bar2"></div>
+    </div>
+    <div class="row">
+      <div class="box full" id="vb-hbar1"></div>
+    </div>
+  </div>
+
+  <!-- FULL LAVA -->
+  <div class="section">
+    <div class="label" style="border-left:3px solid #fdd08a;padding-left:13px">Full Lava + Lines</div>
+    <div class="desc" style="padding-left:16px">All bars lava. Gradient numbers. Stat cards.</div>
+    <div class="stats">
+      <div class="box stat" id="d-stat1"></div>
+      <div class="box stat" id="d-stat2"></div>
+      <div class="box stat" id="d-stat3"></div>
+    </div>
+    <div class="row">
+      <div class="box" id="d-bar1"></div>
+      <div class="box" id="d-bar2"></div>
+    </div>
+    <div class="row">
+      <div class="box full" id="d-line1"></div>
+    </div>
+    <div class="row">
+      <div class="box full" id="d-hbar1"></div>
+    </div>
+  </div>
+
+  <!-- SAND -->
+  <div class="sand-wrap">
+    <div class="section" style="margin-bottom:0">
+      <div class="label" style="border-left:3px solid #c4b5fd;padding-left:13px">Sand Mode</div>
+      <div class="desc" style="padding-left:16px">Everything on sand. Highlight, ranks, values, full lava.</div>
+
+      <div class="stats">
+        <div class="box stat" id="s-stat1" style="background:#ebe5d9"></div>
+        <div class="box stat" id="s-stat2" style="background:#ebe5d9"></div>
+        <div class="box stat" id="s-stat3" style="background:#ebe5d9"></div>
+      </div>
+
+      <div class="row">
+        <div class="box" id="s-hl-bar1"></div>
+        <div class="box" id="s-hl-bar2"></div>
+      </div>
+
+      <div class="row">
+        <div class="box full" id="s-rk-hbar1"></div>
+      </div>
+
+      <div class="row">
+        <div class="box full" id="s-vb-hbar1"></div>
+      </div>
+
+      <div class="row">
+        <div class="box full" id="s-line1"></div>
+      </div>
+
+      <div class="row">
+        <div class="box full" id="s-hbar1"></div>
+      </div>
+    </div>
+  </div>
+
+  <script src="../dist/dt-charts.min.js"></script>
+  <script>
+    // DATA
+    const mktBar = [
+      {label:'NVIDIA',value:239,highlight:true},{label:'Meta',value:194},
+      {label:'Tesla',value:102},{label:'Amazon',value:81},{label:'Apple',value:48}
+    ];
+    const lifeBar = [
+      {label:'Japan',value:84.3,highlight:true},{label:'Switzerland',value:83.4},
+      {label:'Australia',value:83.3},{label:'Singapore',value:83.1},{label:'Spain',value:83.0}
+    ];
+    const gdpBar = [
+      {label:'Luxembourg',value:128259},{label:'Singapore',value:105689},
+      {label:'Ireland',value:104039},{label:'Qatar',value:96491,highlight:true},{label:'Switzerland',value:87097}
+    ];
+    const eloBar = [
+      {label:'TTS-1\nOpenAI',value:1129},{label:'Speech-02\nMiniMax',value:1131},
+      {label:'TTS-1 HD\nOpenAI',value:1145},{label:'Speech-02-HD\nMiniMax',value:1151},
+      {label:'V3.1\nElevenLabs',value:1158,highlight:true}
+    ];
+    const studios = [
+      {label:'Nintendo',value:1847},{label:'Square Enix',value:1423},
+      {label:'Capcom',value:1198},{label:'Ubisoft',value:1156,highlight:true},
+      {label:'EA',value:1089},{label:'Konami',value:987},
+      {label:'Sega',value:956},{label:'Bandai Namco',value:834},
+      {label:'Sony',value:789},{label:'Activision',value:734}
+    ];
+    const studiosNoHL = studios.map(s => ({...s, highlight: false}));
+    const streamBar = [
+      {label:'Netflix',value:245000,highlight:true},{label:'Prime Video',value:198000},
+      {label:'Disney+',value:142000},{label:'HBO Max',value:98000},{label:'Hulu',value:87000}
+    ];
+    const skLine = [{
+      label:'South Korea', data:[
+        {x:1960,y:158},{x:1965,y:198},{x:1970,y:279},{x:1975,y:610},{x:1980,y:1704},
+        {x:1985,y:2458},{x:1990,y:6610},{x:1995,y:12340},{x:2000,y:12257},
+        {x:2005,y:19403},{x:2010,y:23087},{x:2015,y:28732},{x:2020,y:31638},{x:2023,y:33393}
+      ]
+    }];
+
+    // === HIGHLIGHT + BIG NUMBERS ===
+    DTCharts.create('#hl-bar1', {
+      type:'bar', title:'Market Cap Growth (2023)', subtitle:'NVIDIA dominates',
+      source:'DropThe Entity Database', data:mktBar, valueSuffix:'%', width:500, height:380
+    });
+    DTCharts.create('#hl-bar2', {
+      type:'bar', title:'Life Expectancy (2023)', subtitle:'Japan leads',
+      source:'WHO via DropThe', data:lifeBar, valueSuffix:' yrs', width:500, height:380
+    });
+
+    // === RANK BADGES ===
+    DTCharts.create('#rk-hbar1', {
+      type:'hbar', title:'Top 10 Game Studios by Titles Published',
+      subtitle:'Ubisoft highlighted — rank badges on top 3', source:'DropThe Entity Database',
+      data:studios, showRank:true, width:1024
+    });
+    DTCharts.create('#rk-hbar2', {
+      type:'hbar', title:'Streaming Availability Records',
+      subtitle:'Netflix highlighted — rank badges', source:'DropThe Streaming Database',
+      data:streamBar, showRank:true, width:1024
+    });
+
+    // === VALUES ON BAR ===
+    DTCharts.create('#vb-bar1', {
+      type:'bar', title:'GDP Per Capita (2023)', subtitle:'Values inside bars',
+      source:'World Bank via DropThe', data:gdpBar, valuePrefix:'$', valuesOnBar:true, width:500, height:380
+    });
+    DTCharts.create('#vb-bar2', {
+      type:'bar', title:'Voice AI ELO Scores', subtitle:'ElevenLabs highlighted',
+      source:'ElevenLabs', data:eloBar, valuesOnBar:true, width:500, height:380
+    });
+    DTCharts.create('#vb-hbar1', {
+      type:'hbar', title:'Streaming Records — Values Inside',
+      subtitle:'Netflix highlighted', source:'DropThe Streaming Database',
+      data:streamBar, valuesOnBar:true, width:1024
+    });
+
+    // === FULL LAVA ===
+    DTCharts.create('#d-stat1', {
+      type:'stat', title:'ENTITIES',
+      data:{value:1940000,label:'Total entities tracked',delta:'+48K this week',deltaPositive:true},
+      width:280, height:180
+    });
+    DTCharts.create('#d-stat2', {
+      type:'stat', title:'KNOWLEDGE GRAPH',
+      data:{value:3500000,label:'Verified relationships',suffix:'+',delta:'+120K this month',deltaPositive:true},
+      width:280, height:180
+    });
+    DTCharts.create('#d-stat3', {
+      type:'stat', title:'STREAMING',
+      data:{value:700000,label:'Availability records',suffix:'+'},
+      width:280, height:180
+    });
+    DTCharts.create('#d-bar1', {
+      type:'bar', title:'GDP Per Capita (2023)', subtitle:'All bars lava',
+      source:'World Bank via DropThe', data:gdpBar.map(d=>({...d,highlight:false})), valuePrefix:'$', width:500, height:380
+    });
+    DTCharts.create('#d-bar2', {
+      type:'bar', title:'Voice AI ELO Scores', subtitle:'Full color mode',
+      source:'ElevenLabs', data:eloBar.map(d=>({...d,highlight:false})), width:500, height:380
+    });
+    DTCharts.create('#d-line1', {
+      type:'line', title:'South Korea GDP Per Capita (1960-2023)',
+      subtitle:'The economic miracle in one chart', source:'World Bank via DropThe',
+      data:skLine, yPrefix:'$', width:1024, height:400
+    });
+    DTCharts.create('#d-hbar1', {
+      type:'hbar', title:'Top 10 Game Studios',
+      subtitle:'Full lava — rank badges', source:'DropThe Entity Database',
+      data:studiosNoHL, showRank:true, width:1024
+    });
+
+    // === SAND ===
+    DTCharts.create('#s-stat1', {
+      type:'stat', title:'ENTITIES', theme:'sand',
+      data:{value:1940000,label:'Total entities tracked',delta:'+48K this week',deltaPositive:true},
+      width:280, height:180
+    });
+    DTCharts.create('#s-stat2', {
+      type:'stat', title:'KNOWLEDGE GRAPH', theme:'sand',
+      data:{value:3500000,label:'Verified relationships',suffix:'+',delta:'+120K this month',deltaPositive:true},
+      width:280, height:180
+    });
+    DTCharts.create('#s-stat3', {
+      type:'stat', title:'STREAMING', theme:'sand',
+      data:{value:700000,label:'Availability records',suffix:'+'},
+      width:280, height:180
+    });
+    DTCharts.create('#s-hl-bar1', {
+      type:'bar', title:'Market Cap Growth (2023)', subtitle:'NVIDIA highlighted',
+      source:'DropThe Entity Database', theme:'sand', data:mktBar, valueSuffix:'%', width:500, height:380
+    });
+    DTCharts.create('#s-hl-bar2', {
+      type:'bar', title:'Life Expectancy (2023)', subtitle:'Japan highlighted',
+      source:'WHO via DropThe', theme:'sand', data:lifeBar, valueSuffix:' yrs', width:500, height:380
+    });
+    DTCharts.create('#s-rk-hbar1', {
+      type:'hbar', title:'Top 10 Game Studios',
+      subtitle:'Rank badges + highlight on sand', source:'DropThe Entity Database',
+      theme:'sand', data:studios, showRank:true, width:1024
+    });
+    DTCharts.create('#s-vb-hbar1', {
+      type:'hbar', title:'Streaming Records — Values Inside',
+      subtitle:'On sand', source:'DropThe Streaming Database',
+      theme:'sand', data:streamBar, valuesOnBar:true, width:1024
+    });
+    DTCharts.create('#s-line1', {
+      type:'line', title:'South Korea GDP Per Capita (1960-2023)',
+      subtitle:'Lava area on sand', source:'World Bank via DropThe',
+      theme:'sand', data:skLine, yPrefix:'$', width:1024, height:400
+    });
+    DTCharts.create('#s-hbar1', {
+      type:'hbar', title:'Top 10 Game Studios',
+      subtitle:'Full lava on sand', source:'DropThe Entity Database',
+      theme:'sand', data:studiosNoHL, showRank:true, width:1024
+    });
+  </script>
+</body>
+</html>

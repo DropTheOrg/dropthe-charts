@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>DropThe Charts Demo</title>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #050508;
+      color: #f0f0f0;
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      padding: 40px;
+    }
+    h1 { font-size: 24px; margin-bottom: 8px; }
+    p.sub { color: #555566; font-size: 14px; margin-bottom: 40px; }
+    .chart-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    .chart-box {
+      background: #0a0a0f;
+      border-radius: 16px;
+      padding: 0;
+      overflow: hidden;
+    }
+    .chart-box.full { grid-column: 1 / -1; }
+    .chart-box.stat { max-width: 300px; }
+    .stats-row {
+      display: flex;
+      gap: 24px;
+      margin-bottom: 24px;
+    }
+    @media (max-width: 768px) {
+      .chart-row { grid-template-columns: 1fr; }
+      .stats-row { flex-direction: column; }
+      body { padding: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <h1>DropThe Charts</h1>
+  <p class="sub">Data visualization library -- dark mode, film grain, gradient fills</p>
+
+  <div class="stats-row">
+    <div class="chart-box stat" id="stat1"></div>
+    <div class="chart-box stat" id="stat2"></div>
+    <div class="chart-box stat" id="stat3"></div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box" id="bar1"></div>
+    <div class="chart-box" id="bar2"></div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box full" id="line1"></div>
+  </div>
+
+  <div class="chart-row">
+    <div class="chart-box full" id="hbar1"></div>
+  </div>
+
+  <!-- Sand theme -->
+  <h2 style="margin: 40px 0 16px; color: #8a8478;">Sand Theme</h2>
+  <div class="chart-row">
+    <div class="chart-box" id="sand-bar" style="background: #f5f0e8;"></div>
+    <div class="chart-box" id="sand-stat" style="background: #f5f0e8; max-width: 300px;"></div>
+  </div>
+
+  <script src="../dist/dt-charts.min.js"></script>
+  <script>
+    // Stat Cards
+    DTCharts.create('#stat1', {
+      type: 'stat',
+      title: 'ENTITIES',
+      data: { value: 1940000, label: 'Total entities tracked', delta: '+48K this week', deltaPositive: true },
+      width: 280, height: 180
+    });
+
+    DTCharts.create('#stat2', {
+      type: 'stat',
+      title: 'KNOWLEDGE GRAPH',
+      data: { value: 3500000, label: 'Verified relationships', delta: '+120K this month', deltaPositive: true },
+      width: 280, height: 180
+    });
+
+    DTCharts.create('#stat3', {
+      type: 'stat',
+      title: 'STREAMING',
+      data: { value: 700000, label: 'Availability records', suffix: '+' },
+      width: 280, height: 180
+    });
+
+    // Bar Charts
+    DTCharts.create('#bar1', {
+      type: 'bar',
+      title: 'GDP Per Capita (2023)',
+      subtitle: 'Top 5 by purchasing power parity',
+      source: 'World Bank via DropThe',
+      data: [
+        { label: 'Luxembourg', value: 128259 },
+        { label: 'Singapore', value: 105689 },
+        { label: 'Ireland', value: 104039 },
+        { label: 'Qatar', value: 96491 },
+        { label: 'Switzerland', value: 87097, highlight: true }
+      ],
+      valuePrefix: '$',
+      width: 500, height: 380
+    });
+
+    DTCharts.create('#bar2', {
+      type: 'bar',
+      title: 'Voice AI Model ELO Scores',
+      subtitle: 'Arena benchmark comparison',
+      source: 'ElevenLabs',
+      data: [
+        { label: 'TTS-1\nOpenAI', value: 1129 },
+        { label: 'Speech-02\nMiniMax', value: 1131 },
+        { label: 'TTS-1 HD\nOpenAI', value: 1145 },
+        { label: 'Speech-02-HD\nMiniMax', value: 1151 },
+        { label: 'V3.1\nElevenLabs', value: 1158, highlight: true }
+      ],
+      width: 500, height: 380
+    });
+
+    // Line Chart
+    DTCharts.create('#line1', {
+      type: 'line',
+      title: 'South Korea GDP Per Capita (1960-2023)',
+      subtitle: 'The economic miracle in one chart',
+      source: 'World Bank via DropThe',
+      data: [{
+        label: 'South Korea',
+        data: [
+          { x: 1960, y: 158 }, { x: 1965, y: 198 }, { x: 1970, y: 279 },
+          { x: 1975, y: 610 }, { x: 1980, y: 1704 }, { x: 1985, y: 2458 },
+          { x: 1990, y: 6610 }, { x: 1995, y: 12340 }, { x: 2000, y: 12257 },
+          { x: 2005, y: 19403 }, { x: 2010, y: 23087 }, { x: 2015, y: 28732 },
+          { x: 2020, y: 31638 }, { x: 2023, y: 33393 }
+        ]
+      }],
+      ySuffix: '',
+      yPrefix: '$',
+      width: 1024, height: 400
+    });
+
+    // Horizontal Bar
+    DTCharts.create('#hbar1', {
+      type: 'hbar',
+      title: 'Top 10 Game Studios by Titles Published',
+      subtitle: 'Ranked by total games in database',
+      source: 'DropThe Entity Database',
+      data: [
+        { label: 'Nintendo', value: 1847 },
+        { label: 'Square Enix', value: 1423 },
+        { label: 'Capcom', value: 1198 },
+        { label: 'Ubisoft', value: 1156, highlight: true },
+        { label: 'EA', value: 1089 },
+        { label: 'Konami', value: 987 },
+        { label: 'Sega', value: 956 },
+        { label: 'Bandai Namco', value: 834 },
+        { label: 'Sony', value: 789 },
+        { label: 'Activision', value: 734 }
+      ],
+      width: 1024
+    });
+
+    // Sand theme examples
+    DTCharts.create('#sand-bar', {
+      type: 'bar',
+      title: 'Life Expectancy (2023)',
+      subtitle: 'Top 5 countries',
+      source: 'WHO via DropThe',
+      theme: 'sand',
+      data: [
+        { label: 'Japan', value: 84.3 },
+        { label: 'Switzerland', value: 83.4 },
+        { label: 'Australia', value: 83.3 },
+        { label: 'Singapore', value: 83.1 },
+        { label: 'Spain', value: 83.0, highlight: true }
+      ],
+      valueSuffix: ' yrs',
+      width: 500, height: 380
+    });
+
+    DTCharts.create('#sand-stat', {
+      type: 'stat',
+      title: 'COUNTRIES TRACKED',
+      theme: 'sand',
+      data: { value: 246, label: 'With World Bank indicators', delta: '37 metrics each', deltaPositive: true },
+      width: 280, height: 180
+    });
+  </script>
+</body>
+</html>

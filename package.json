@@ -1,0 +1,15 @@
+{
+  "name": "dropthe-charts",
+  "version": "0.1.0",
+  "description": "DropThe data visualization library",
+  "main": "dist/dt-charts.min.js",
+  "scripts": {
+    "build": "esbuild src/index.ts --bundle --minify --outfile=dist/dt-charts.min.js --format=iife --global-name=DTCharts",
+    "build:dev": "esbuild src/index.ts --bundle --outfile=dist/dt-charts.js --format=iife --global-name=DTCharts --sourcemap",
+    "watch": "esbuild src/index.ts --bundle --outfile=dist/dt-charts.js --format=iife --global-name=DTCharts --sourcemap --watch"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "esbuild": "^0.27.3"
+  }
+}
